@@ -12,7 +12,8 @@
     </div>
 
     <div class="tabcontent" v-if="activeTab === 1">
-      <div v-if="store.isLoading" class="py-16">
+      <TutorList />
+      <!-- <div v-if="store.isLoading" class="py-16">
         <v-progress-circular
           indeterminate
           :size="67"
@@ -34,7 +35,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="tabcontent" v-if="activeTab === 2">
       <v-form
@@ -233,7 +234,7 @@
         </v-col>
       </v-form>
     </div>
-    <div class="tabcontent" v-if="activeTab === 7">
+    <!-- <div class="tabcontent" v-if="activeTab === 7">
       <div class="rooms" v-for="room of store.rooms">
         <div class="card">
           <div class="name">
@@ -250,7 +251,44 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
+
+    <div class="tabcontent" v-if="activeTab === 7">
+  <div class="flex">
+    <h3>Rooms</h3>
+      <button class="uppercase items-center flex cursor-pointer">
+        <v-icon left>mdi-plus</v-icon>
+        New room
+      </button>
+  </div>
+  <div class="rooms w-full">
+    <table class="min-w-full table-auto border-0">
+      <thead>
+        <tr class="uppercase text-left">
+          <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.name2") }}</th>
+          <th class="px-4 py-2 border-0 border-t-0">{{ $t("card.places") }}</th>
+          <th class="px-4 py-2 border-0 border-t-0">{{ $t("button.actions") }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="room in store.rooms" :key="room.id">
+          <td class="border-t border-t-gray-200 border-0 px-4 py-2 ">{{ room.name }}</td>
+          <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ room.capacity }}</td>
+          <td class="border-t border-t-gray-200 border-0 px-4 py-2">
+            <button
+              class="delete bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              @click="deleteItem(room.id, 'room', 'rooms')"
+            >
+              {{ $t("button.delete") }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
     <div class="tabcontent" v-if="activeTab === 8">
       <v-form
         @submit.prevent="addNewRoom()"
@@ -441,6 +479,7 @@
 </template>
 <script setup lang="ts">
 import { useStore } from "@/store/store";
+import TutorList from "~/components/TutorList.vue";
 import { Room, Group } from "~/composables/classes";
 const { t: $t } = useI18n();
 

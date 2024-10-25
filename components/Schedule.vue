@@ -2,16 +2,19 @@
   <div class="shed">
     <h3>{{ $t("schedule") }}</h3>
     <table v-if="!store.isLoading">
-      <tr>
-        <th>{{ $t("event_table") }}</th>
-        <th>{{ $t("days.monday") }}</th>
-        <th>{{ $t("days.tuesday") }}</th>
-        <th>{{ $t("days.wednesday") }}</th>
-        <th>{{ $t("days.thursday") }}</th>
-        <th>{{ $t("days.friday") }}</th>
-        <th>{{ $t("days.saturday") }}</th>
-      </tr>
-      <tr v-for="item of shed">
+      <thead>
+        <tr>
+          <th>{{ $t("event_table") }}</th>
+          <th>{{ $t("days.monday") }}</th>
+          <th>{{ $t("days.tuesday") }}</th>
+          <th>{{ $t("days.wednesday") }}</th>
+          <th>{{ $t("days.thursday") }}</th>
+          <th>{{ $t("days.friday") }}</th>
+          <th>{{ $t("days.saturday") }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item of shed">
         <th>{{ item.time }}:00 - {{ item.time + 1 }}:00</th>
         <td
           v-for="event of item.events"
@@ -23,6 +26,8 @@
           </p>
         </td>
       </tr>
+      </tbody>
+      
     </table>
     <div v-else="store.isLoading" class="mt-20 py-16">
       <v-progress-circular

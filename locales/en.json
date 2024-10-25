@@ -26,6 +26,7 @@
   },
   "button": {
     "add": "Add",
+    "addTutor": "New tutor",
     "delete": "Delete",
     "login": "Log in",
     "logout": "Log out",
@@ -36,7 +37,7 @@
   "card": {
     "name": "Name",
     "email": "Email",
-    "places": "Places",
+    "places": "Capacity",
     "room": "room"
   },
   "add": {
@@ -55,7 +56,7 @@
   },
   "label": {
     "name": "Name",
-    "name2": "Name",
+    "name2": "Room name",
     "surname": "Surname",
     "email": "Email",
     "group": "Choose a group",
@@ -68,7 +69,8 @@
     "username": "Username",
     "password": "Password",
     "freetime": "Enter time",
-    "freeday": "Choose a day"
+    "freeday": "Choose a day",
+    "filterByName": "Search for tutors"
   },
   "rules": {
     "required": "Field is required",
