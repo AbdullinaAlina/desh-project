@@ -1,26 +1,30 @@
+<!-- TutorList.vue -->
+
 <template>
     <div class="w-full p-4">
       <!-- Tutors List -->
-      <div class="flex items-center mb-4">
-        <h2>{{ $t("tab.tutors") }}</h2>
-        <button @click="showAddTutorForm = true" class="uppercase flex items-center cursor-pointer">
-          <v-icon left>mdi-plus</v-icon>
-          {{ $t("button.addTutor") }}
-        </button>
-        <div class="rounded-2xl">
-            <v-icon left>mdi-search</v-icon>
-            <v-text-field
-            v-model="nameFilter"
-            @input="filterTutors"
-            :label="$t('label.filterByName')"
-            class="rounded-2xl w-45"
-            prepend-inner-icon="mdi-magnify"
-            ></v-text-field>
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-row gap-4">
+            <h1>{{ $t("tab.tutors") }}</h1>
+            <button @click="showAddTutorForm = true" class="uppercase flex items-center cursor-pointer">
+                <v-icon left>mdi-plus</v-icon>
+                {{ $t("button.addTutor") }}
+            </button>
         </div>
         
 
-        
-
+        <div class="search-bar flex items-center px-3 py-1 rounded-full bg-gray-100 shadow-sm w-52">
+    <v-icon class="text-gray-500 mr-2">mdi-magnify</v-icon>
+    <v-text-field
+        v-model="nameFilter"
+        @input="filterTutors"
+        :label="$t('label.filterByName')"
+        hide-details
+        solo
+        dense
+        class="search-input bg-transparent placeholder-gray-500 text-gray-800"
+    ></v-text-field>
+</div>
       </div>
   
       <div class="tutors w-full">
