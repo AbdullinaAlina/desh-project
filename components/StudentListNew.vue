@@ -1,5 +1,15 @@
 <template>
     <div>
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("button.addStudent") }}
+      </v-btn>
+
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddStudentForm :onSubmit="handleAddStudent"/>
+        </Modal>
+      </teleport>
+
       <div v-if="isLoading" class="py-16">
         <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
@@ -20,22 +30,54 @@
   </template>
   
   <script setup lang="ts">
+  const { t: $t } = useI18n();
+
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
+import AddStudentForm from "./forms/AddStudentForm.vue";
   
   const store = useStore();
-  const students = ref([]);
+  const students = ref<User[]>([]);
   const isLoading = ref(false);
+  const showModal = ref(false);
   
   const loadStudents = async () => {
     isLoading.value = store.isLoading;
     students.value = store.students;
   };
+
+  const closeModal = () => {
+    showModal.value = false;
+  }
   
   // Fetch students when the component is mounted
   watchEffect(() => {
     loadStudents();
   });
+
+  const handleAddStudent = async (data: { name: string; surname: string; email: string }) => {
+    const org_id = localStorage.getItem("org_id");
+    if (org_id) {
+    try {
+      await store.addNewUser({
+        id: null,
+      username: null,
+      password: null,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: 2, 
+        organization: Number(org_id),
+        group: null
+      });
+      students.value = store.students; // Refresh the list
+      showModal.value = false; // Close the modal
+    } catch (error) {
+      console.error("Error adding tutor:", error);
+    }
+    }
+    
+  };
   
   const deleteStudent = async (studentId: number) => {
     if (!studentId) return;

@@ -1,5 +1,18 @@
 <template>
     <div>
+      <!-- Add Tutor Button -->
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("button.addTutor") }}
+      </v-btn>
+  
+      <!-- Add Tutor Modal -->
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddTutorForm :onSubmit="handleAddTutor" />
+        </Modal>
+      </teleport>
+  
+      <!-- Tutors List -->
       <div v-if="isLoading" class="py-16">
         <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
@@ -20,21 +33,61 @@
   </template>
   
   <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  const { t: $t } = useI18n();
+
+  import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
-  import { ref } from "vue";
-  
-  const props = defineProps({
-    onDelete: Function, // Callback for delete
-  });
+  import Modal from "@/components/Modal.vue";
+  import AddTutorForm from "@/components/forms/AddTutorForm.vue";
   
   const store = useStore();
-  const isLoading = ref(store.isLoading);
-  const tutors = ref(store.tutors);
-
+  const isLoading = ref(false);
+  const tutors = ref<User[]>([]);
+  const showModal = ref(false);
+  
+  const loadTutors = async () => {
+    isLoading.value = store.isLoading;
+    tutors.value = store.tutors;
+  };
+  
+  // Fetch tutors when the component is mounted
+  watchEffect(() => {
+    loadTutors();
+  });
+  
   const deleteUser = async (userId: number | null, users: any) => {
-  if (!userId || !users) return;
-  await store.deleteUser(userId, users);
-};
+    if (!userId || !users) return;
+    await store.deleteUser(userId, users);
+  };
+  
+  const closeModal = () => {
+    showModal.value = false;
+  };
+  
+  const handleAddTutor = async (data: { name: string; surname: string; email: string }) => {
+    const org_id = localStorage.getItem("org_id");
+    if (org_id) {
+    try {
+      await store.addNewUser({
+        id: null,
+      username: null,
+      password: null,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: 3, // Assuming 3 is the role ID for tutors
+        organization: Number(org_id),
+        group: null,
+      });
+      tutors.value = store.tutors; // Refresh the list
+      showModal.value = false; // Close the modal
+    } catch (error) {
+      console.error("Error adding tutor:", error);
+    }
+    }
+    
+  };
   </script>
   
   <style scoped>
