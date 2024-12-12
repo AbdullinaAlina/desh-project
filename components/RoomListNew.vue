@@ -1,5 +1,15 @@
 <template>
     <div>
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("button.addRoom") }}
+      </v-btn>
+
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddRoomForm :onSubmit="handleAddRoom"/>
+        </Modal>
+      </teleport>
+
       <div v-if="isLoading" class="py-16">
         <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
@@ -19,13 +29,22 @@
     </div>
   </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
+  import { Room } from "~/composables/classes";
+import Modal from "./Modal.vue";
+import AddRoomForm from "./forms/AddRoomForm.vue";
+  const { t: $t } = useI18n();
   
   const store = useStore();
-  const rooms = ref([]);
+  const rooms = ref<Room[]>([]);
   const isLoading = ref(false);
+  const showModal = ref(false);
+
+  const closeModal = () => {
+    showModal.value = false;
+  }
   
   const loadRooms = async () => {
     isLoading.value = store.isLoading;
@@ -37,7 +56,16 @@
     loadRooms();
   });
   
-  const deleteRoom = async (roomId: number) => {
+  const handleAddRoom = async(data: {name: string, capacity: number}) => {
+    const org_id = localStorage.getItem("org_id") || null;
+    if (org_id) {
+    await store.addNewRoom(data.name, data.capacity, org_id);
+  }
+  }
+
+
+
+  const deleteRoom = async (roomId: number | undefined) => {
     if (!roomId) return;
   
     try {

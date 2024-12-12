@@ -61,8 +61,8 @@ import AddStudentForm from "./forms/AddStudentForm.vue";
     try {
       await store.addNewUser({
         id: null,
-      username: null,
-      password: null,
+        username: null,
+        password: null,
         name: data.name,
         surname: data.surname,
         email: data.email,
@@ -79,7 +79,7 @@ import AddStudentForm from "./forms/AddStudentForm.vue";
     
   };
   
-  const deleteStudent = async (studentId: number) => {
+  const deleteStudent = async (studentId: number | null) => {
     if (!studentId) return;
   
     try {

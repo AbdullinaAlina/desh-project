@@ -1,5 +1,13 @@
 <template>
     <div>
+      <v-btn @click="showModal = true">
+        {{ $t("button.addEvent") }}
+      </v-btn>
+
+      <Modal :isVisible="showModal" :close="closeModal">
+        <AddEventForm :submitForm="handleAddEvent"/>
+      </Modal>
+
       <div v-if="isLoading" class="py-16">
         <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
@@ -26,11 +34,21 @@
   <script setup lang="ts">
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
-  
+import { Eventt } from "~/composables/classes";
+import Modal from "./Modal.vue";
+import AddEventForm from "./forms/AddEventForm.vue";
+  const { t: $t } = useI18n();
+
   const store = useStore();
-  const events = ref([]);
+  const events = ref<Eventt[]>([]);
   const isLoading = ref(false);
   
+  const showModal = ref(false);
+
+  const closeModal = () => {
+    showModal.value = false;
+  }
+
   const loadEvents = async () => {
     isLoading.value = store.isLoading;
     events.value = store.events;
@@ -41,7 +59,39 @@
     loadEvents();
   });
   
-  const deleteEvent = async (eventId: number) => {
+  const handleAddEvent = async (data: {
+    time: number;
+    day: string;
+    disciplineName: string;
+    tutorId: number;
+    groupId: number;
+    roomId: number;
+}) => {
+    const org_id = localStorage.getItem("org_id") || null;
+    const dayIndex = store.days.findIndex((day) => day.name === data.day.trim());
+    
+    if (org_id && dayIndex !== -1) {
+        try {
+            await store.addNewEvent(
+                data.time,
+                data.roomId,
+                data.disciplineName,
+                dayIndex,
+                data.tutorId,
+                data.groupId
+            );
+            // Refresh the event list
+            events.value = store.events;
+            showModal.value = false; // Close the modal
+        } catch (error) {
+            console.error("Error adding event:", error);
+        }
+    } else {
+        console.error("Invalid day or organization ID");
+    }
+};
+
+  const deleteEvent = async (eventId: number | undefined) => {
     if (!eventId) return;
   
     try {

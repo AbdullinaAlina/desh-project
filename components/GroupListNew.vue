@@ -1,5 +1,14 @@
 <template>
     <div>
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("button.addGroup") }}
+      </v-btn>
+      
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddGroupForm :onSubmit="handleAddGroup"/>
+        </Modal>
+      </teleport>
       <div v-if="isLoading" class="py-16">
         <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
@@ -21,11 +30,19 @@
   <script setup lang="ts">
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
+import AddGroupForm from "./forms/AddGroupForm.vue";
+import { Group } from "~/composables/classes";
+  const {t: $t} = useI18n();
   
   const store = useStore();
-  const groups = ref([]);
+  const groups = ref<Group[]>([]);
   const isLoading = ref(false);
-  
+  const showModal = ref(false);
+
+  const closeModal = () => {
+    showModal.value = false;
+  }
+
   const loadGroups = async () => {
     isLoading.value = store.isLoading;
     groups.value = store.groups;
@@ -35,10 +52,22 @@
   watchEffect(() => {
     loadGroups();
   });
+
+  const handleAddGroup = async (data: { name: string }) => {
+  const org_id = localStorage.getItem("org_id");
+  if (org_id) {
+    try {
+      await store.addNewGroup(data.name, org_id);
+      groups.value = store.groups; // Refresh the list
+      showModal.value = false; // Close the modal
+    } catch (error) {
+      console.error("Error adding group:", error);
+    }
+  }
+};
   
-  const deleteGroup = async (groupId: number) => {
+  const deleteGroup = async (groupId: number | undefined) => {
     if (!groupId) return;
-  
     try {
       await store.deleteItem(groupId, "group", "groups");
       groups.value = store.groups; // Refresh the list
