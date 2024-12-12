@@ -33,6 +33,11 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({
+  middleware: ["auth", "role"],
+});
+
 import { useStore } from "@/store/store";
 import EventListNew from "~/components/EventListNew.vue";
 import GroupListNew from "~/components/GroupListNew.vue";

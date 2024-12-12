@@ -46,42 +46,36 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+definePageMeta({
+  middleware: ["auth"], // Define middleware
+});
+
 import { useStore } from "@/store/store";
 import { ref } from "vue";
 
-export default {
-  setup() {
-    const { t: $t } = useI18n();
-    const forms = ref(false);
-    const store = useStore();
-    const username = ref("");
-    const password = ref("");
-    const rules = {
-      required: (value: string) => !!value || $t("rules.required"),
-    };
+const { t: $t } = useI18n();
+const forms = ref(false);
+const store = useStore();
+const username = ref("");
+const password = ref("");
+const rules = {
+  required: (value: string) => !!value || $t("rules.required"),
+};
 
-    useHead({
-      title: "DESH",
-    });
-    const login = async () => {
-      if (!forms.value) return;
-      if (username.value && password.value) {
-        await store.login(username.value, password.value);
-        username.value = "";
-        password.value = "";
-      } else {
-        alert("Please enter username and password!");
-      }
-    };
-    return {
-      store,
-      login,
-      forms,
-      rules,
-      username,
-      password,
-    };
-  },
+useHead({
+  title: "DESH",
+});
+
+const login = async () => {
+  if (!forms.value) return;
+  if (username.value && password.value) {
+    await store.login(username.value, password.value);
+    username.value = "";
+    password.value = "";
+  } else {
+    alert("Please enter username and password!");
+  }
 };
 </script>

@@ -33,6 +33,12 @@ export const useStore = defineStore("store", {
           localStorage.setItem("role", response.role);
           localStorage.setItem("user_id", response.user_id);
           localStorage.setItem("org_id", response.org_id);
+
+          useCookie("accessToken").value = response.token;
+          useCookie("role").value = response.role;
+          useCookie("user_id").value = response.user_id;
+          useCookie("org_id").value = response.org_id;
+
           const role = localStorage.getItem("role") || undefined;
           this.isLogged = true;
           await router.push({ name: role });
@@ -51,30 +57,35 @@ export const useStore = defineStore("store", {
       localStorage.removeItem("role");
       localStorage.removeItem("user_id");
       localStorage.removeItem("org_id");
+
+      useCookie("accessToken").value = null;
+      useCookie("role").value = null;
+      useCookie("user_id").value = null;
+      useCookie("org_id").value = null;
       // localStorage.clear();
       await router.push({ name: "Auth" });
     },
-    async validateApp(to: RouteLocationNormalized | RouteLocationNormalizedLoaded): Promise<void> {
-      const router = useRouter();
-      const token = localStorage.getItem("accessToken") || null;
-      if (to && to.meta && "requiresAuth" in to.meta && to.meta.requiresAuth) {
-        if (!token) {
-          localStorage.removeItem("accessToken");
-          await router.push({ name: "Auth" });
-          this.isLogged = false;
-        }
-        if (token) {
-          this.isLogged = true;
-        }
-      }
-      if (to.name === "Auth" && token) {
-        const role = localStorage.getItem("role") || null;
-        this.isLogged = true;
-        if (role) {
-          await router.push({ name: role });
-        }
-      }
-    },
+    // async validateApp(to: RouteLocationNormalized | RouteLocationNormalizedLoaded): Promise<void> {
+    //   const router = useRouter();
+    //   const token = localStorage.getItem("accessToken") || null;
+    //   if (to && to.meta && "requiresAuth" in to.meta && to.meta.requiresAuth) {
+    //     if (!token) {
+    //       localStorage.removeItem("accessToken");
+    //       await router.push({ name: "Auth" });
+    //       this.isLogged = false;
+    //     }
+    //     if (token) {
+    //       this.isLogged = true;
+    //     }
+    //   }
+    //   if (to.name === "Auth" && token) {
+    //     const role = localStorage.getItem("role") || null;
+    //     this.isLogged = true;
+    //     if (role) {
+    //       await router.push({ name: role });
+    //     }
+    //   }
+    // },
     async getAllData() {
       try {
         await Promise.allSettled([
