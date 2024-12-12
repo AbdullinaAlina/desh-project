@@ -2,7 +2,7 @@
     <div>
       <!-- Add Tutor Button -->
       <v-btn @click="showModal = true" class="mb-4">
-        {{ $t("button.addTutor") }}
+        {{ $t("add.tutor") }}
       </v-btn>
   
       <!-- Add Tutor Modal -->

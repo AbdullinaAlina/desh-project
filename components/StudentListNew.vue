@@ -1,7 +1,7 @@
 <template>
     <div>
       <v-btn @click="showModal = true" class="mb-4">
-        {{ $t("button.addStudent") }}
+        {{ $t("add.student") }}
       </v-btn>
 
       <teleport to="body">

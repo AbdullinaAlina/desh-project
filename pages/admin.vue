@@ -10,343 +10,28 @@
         {{ $t(tab.name) }}
       </button>
     </div>
-
     <div class="tabcontent" v-if="activeTab === 1">
       <TutorListNew :onDelete="deleteUser"/>
     </div>
+    
     <div class="tabcontent" v-if="activeTab === 2">
-      <v-form
-        @submit.prevent="addNewUser('tutor')"
-        class="color-white flex flex-col items-center"
-      >
-        <h3 class="text-center p-5 font-bold text-2xl">
-          {{ $t("add.tutor") }}
-        </h3>
-        <v-col>
-          <v-text-field
-            :label="$t('label.name')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="addName"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.surname')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="addSurname"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.email')"
-            :placeholder="$t('placeholder')"
-            type="email"
-            variant="outlined"
-            v-model="addEmail"
-            :rules="[rules.required, rules.email]"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-btn
-            color="#4DD0E1"
-            :loading="store.isLoading"
-            block
-            text="white"
-            size="large"
-            type="submit"
-            variant="elevated"
-          >
-            {{ $t("button.add") }}
-          </v-btn>
-        </v-col>
-      </v-form>
-    </div>
-    <div class="tabcontent" v-if="activeTab === 3">
       <StudentListNew />
-      
     </div>
-    <div class="tabcontent" v-if="activeTab === 4">
-      <v-form
-        @submit.prevent="addNewUser('student')"
-        class="color-white flex flex-col items-center"
-      >
-        <h3 class="text-center p-5 font-bold text-2xl">
-          {{ $t("add.student") }}
-        </h3>
-        <v-col>
-          <v-text-field
-            :label="$t('label.name')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="addName"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.surname')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="addSurname"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.email')"
-            :placeholder="$t('placeholder')"
-            type="email"
-            variant="outlined"
-            v-model="addEmail"
-            :rules="[rules.required, rules.email]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.group')"
-            :placeholder="$t('placeholder')"
-            type="input"
-            variant="outlined"
-            v-model="addGroupId"
-            list="groups"
-            id="group-choice"
-            name="group-choice"
-          ></v-text-field>
-        </v-col>
-        <datalist id="groups">
-          <option
-            v-for="group of store.groups"
-            :key="group.id"
-            :value="group.id"
-          >
-            {{ group.name }}
-          </option>
-        </datalist>
-        <v-col cols="6">
-          <v-btn
-            color="#4DD0E1"
-            :loading="store.isLoading"
-            block
-            text="white"
-            size="large"
-            type="submit"
-            variant="elevated"
-          >
-            {{ $t("button.add") }}
-          </v-btn>
-        </v-col>
-      </v-form>
-    </div>
-    <div class="tabcontent" v-if="activeTab === 5">
+    
+    <div class="tabcontent" v-if="activeTab === 3">
       <GroupListNew />
     </div>
-    <div class="tabcontent" v-if="activeTab === 6">
-      <v-form
-        @submit.prevent="addNewGroup()"
-        class="color-white flex flex-col items-center"
-      >
-        <h3 class="text-center p-5 font-bold text-2xl">
-          {{ $t("add.group") }}
-        </h3>
-        <v-col>
-          <v-text-field
-            :label="$t('label.name2')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="groupName"
-            :rules="[rules.required, rules.group]"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-btn
-            color="#4DD0E1"
-            :loading="store.isLoading"
-            block
-            text="white"
-            size="large"
-            type="submit"
-            variant="elevated"
-          >
-            {{ $t("button.add") }}
-          </v-btn>
-        </v-col>
-      </v-form>
-    </div>
-
-    <div class="tabcontent" v-if="activeTab === 7">
+    
+    <div class="tabcontent" v-if="activeTab === 4">
       <RoomListNew />
     </div>
 
-
-    <div class="tabcontent" v-if="activeTab === 8">
-      <v-form
-        @submit.prevent="addNewRoom()"
-        class="color-white flex flex-col items-center"
-      >
-        <h3 class="text-center p-5 font-bold text-2xl">{{ $t("add.room") }}</h3>
-        <v-col>
-          <v-text-field
-            :label="$t('label.name2')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="roomName"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.places')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="roomCap"
-            :rules="[rules.required]"
-            type="number"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="6">
-          <v-btn
-            color="#4DD0E1"
-            :loading="store.isLoading"
-            block
-            text="white"
-            size="large"
-            type="submit"
-            variant="elevated"
-          >
-            {{ $t("button.add") }}
-          </v-btn>
-        </v-col>
-      </v-form>
-    </div>
-    <div class="tabcontent" v-if="activeTab === 9">
+     <div class="tabcontent" v-if="activeTab === 5">
       <EventListNew />
-    </div>
-    <div class="tabcontent" v-if="activeTab === 10">
-      <v-form
-        @submit.prevent="addNewEvent()"
-        class="color-white flex flex-col items-center"
-      >
-        <h3 class="text-center p-5 font-bold text-2xl">
-          {{ $t("add.event") }}
-        </h3>
-        <v-col>
-          <v-text-field
-            :label="$t('label.time')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            type="number"
-            v-model="addTime"
-            id="time"
-            maxlength="2"
-            min="8"
-            max="20"
-            step="1"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            :label="$t('label.day')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            list="days"
-            data-list="days"
-            type="text"
-            v-model="addDay"
-            id="day"
-            name="day"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <datalist id="days">
-          <option v-for="day of store.days" :value="day.name"></option>
-        </datalist>
-        <v-col>
-          <v-text-field
-            :label="$t('label.discipline')"
-            :placeholder="$t('placeholder')"
-            variant="outlined"
-            v-model="disciplineName"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            list="tutors"
-            data-list="tutors"
-            id="tutor-choice"
-            name="tutor-choice"
-            v-model="addTutorId"
-            :label="$t('label.tutor')"
-            :placeholder="$t('placeholder')"
-            type="input"
-            variant="outlined"
-          ></v-text-field>
-        </v-col>
-        <datalist id="tutors">
-          <option v-for="tutor of store.tutors" :value="tutor.id">
-            {{ tutor.name }} {{ tutor.surname }}
-          </option>
-        </datalist>
-        <v-col>
-          <v-text-field
-            :label="$t('label.group')"
-            :placeholder="$t('placeholder')"
-            type="input"
-            variant="outlined"
-            v-model="addGroupId"
-            list="groups"
-            id="group-choice"
-            name="group-choice"
-          ></v-text-field>
-        </v-col>
-        <datalist id="groups">
-          <option
-            v-for="group of store.groups"
-            :key="group.id"
-            :value="group.id"
-          >
-            {{ group.name }}
-          </option>
-        </datalist>
-        <v-col>
-          <v-text-field
-            :label="$t('label.room')"
-            list="rooms"
-            id="room-choice"
-            name="room-choice"
-            v-model="addRoomId"
-            :placeholder="$t('placeholder')"
-            type="input"
-            variant="outlined"
-          ></v-text-field>
-        </v-col>
-        <datalist id="rooms">
-          <option v-for="room of store.rooms" :value="room.id">
-            {{ room.name }}
-          </option>
-        </datalist>
-        <v-col cols="6">
-          <v-btn
-            color="#4DD0E1"
-            :loading="store.isLoading"
-            block
-            text="white"
-            size="large"
-            type="submit"
-            variant="elevated"
-          >
-            {{ $t("button.add") }}
-          </v-btn>
-        </v-col>
-      </v-form>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { useStore } from "@/store/store";
 import EventListNew from "~/components/EventListNew.vue";
@@ -360,15 +45,10 @@ const { t: $t } = useI18n();
 
 const tabs = [
   { name: "tab.tutors", num: 1 },
-  { name: "add.tutor", num: 2 },
-  { name: "tab.students", num: 3 },
-  { name: "add.student", num: 4 },
-  { name: "tab.groups", num: 5 },
-  { name: "add.group", num: 6 },
-  { name: "tab.rooms", num: 7 },
-  { name: "add.room", num: 8 },
-  { name: "tab.events", num: 9 },
-  { name: "add.event", num: 10 },
+  { name: "tab.students", num: 2 },
+  { name: "tab.groups", num: 3 },
+  { name: "tab.rooms", num: 4 },
+  { name: "tab.events", num: 5 },
 ];
 const activeTab = ref(1);
 const addName = ref("");
@@ -414,86 +94,14 @@ const deleteItem = async (id: number | undefined, path: string, items: any) => {
   if (!id || !path || !items) return;
   await store.deleteItem(id, path, items);
 };
-const addNewUser = async (role: string) => {
-  const role_id = role === "student" ? 2 : 3;
-  const org_id = localStorage.getItem("org_id") || null;
-  if (org_id && role_id === 3) {
-    const newUser: User = {
-      id: null,
-      username: null,
-      password: null,
-      name: addName.value,
-      surname: addSurname.value,
-      email: addEmail.value,
-      role: role_id,
-      organization: Number(org_id),
-      group: addTutorGroup,
-    };
-    await store.addNewUser(newUser);
-    addName.value = "";
-    addSurname.value = "";
-    addEmail.value = "";
-  }
-  if (org_id && role_id === 2) {
-    const newUser: User = {
-      id: null,
-      username: null,
-      password: null,
-      name: addName.value,
-      surname: addSurname.value,
-      email: addEmail.value,
-      role: role_id,
-      organization: Number(org_id),
-      group: Number(addGroupId.value),
-    };
-    await store.addNewUser(newUser);
-    addName.value = "";
-    addSurname.value = "";
-    addEmail.value = "";
-    addGroupId.value = "";
-  }
-};
-const addNewGroup = async () => {
-  const org_id = localStorage.getItem("org_id") || null;
-  if (org_id) {
-    await store.addNewGroup(groupName.value, org_id);
-    groupName.value = "";
-  }
-};
-const addNewRoom = async () => {
-  const org_id = localStorage.getItem("org_id") || null;
-  if (org_id) {
-    await store.addNewRoom(roomName.value, roomCap.value, org_id);
-    roomName.value = "";
-    roomCap.value = 0;
-  }
-};
-const addNewEvent = async () => {
-  const org_id = localStorage.getItem("org_id") || null;
-  const day = store.days.findIndex((day) => day.name === addDay.value.trim());
-  if (org_id) {
-    await store.addNewEvent(
-      addTime.value,
-      Number(addRoomId.value),
-      disciplineName.value,
-      day,
-      Number(addTutorId.value),
-      Number(addGroupId.value)
-    );
-    addTime.value = 0;
-    addDay.value = "";
-    addTutorId.value = "";
-    disciplineName.value = "";
-    addRoomId.value = 0;
-    addGroupId.value = "";
-  }
-};
+
 onMounted(getData);
 
 useHead({
   title: "Admin page",
 });
 </script>
+
 <style scoped>
 .nav button.active {
   background-color: #ccc;

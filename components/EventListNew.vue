@@ -1,10 +1,10 @@
 <template>
     <div>
       <v-btn @click="showModal = true">
-        {{ $t("button.addEvent") }}
+        {{ $t("add.event") }}
       </v-btn>
 
-      <Modal :isVisible="showModal" :close="closeModal">
+      <Modal :isVisible="showModal" :onClose="closeModal">
         <AddEventForm :submitForm="handleAddEvent"/>
       </Modal>
 
