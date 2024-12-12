@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-
 definePageMeta({
   middleware: ["auth", "role"],
 });
@@ -56,19 +55,6 @@ const tabs = [
   { name: "tab.events", num: 5 },
 ];
 const activeTab = ref(1);
-const addName = ref("");
-const addSurname = ref("");
-const addEmail = ref("");
-const addGroupId = ref("");
-const groupName = ref("");
-const roomName = ref("");
-const roomCap = ref(0);
-const addTime = ref(0);
-const addDay = ref("");
-const disciplineName = ref("");
-const addTutorId = ref("");
-const addRoomId = ref(0);
-const addTutorGroup = null;
 const store = useStore();
 
 const setTab = (tabNumber: number) => {

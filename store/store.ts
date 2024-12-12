@@ -62,30 +62,9 @@ export const useStore = defineStore("store", {
       useCookie("role").value = null;
       useCookie("user_id").value = null;
       useCookie("org_id").value = null;
-      // localStorage.clear();
-      await router.push({ name: "Auth" });
+      
+      await router.push({ name: "auth" });
     },
-    // async validateApp(to: RouteLocationNormalized | RouteLocationNormalizedLoaded): Promise<void> {
-    //   const router = useRouter();
-    //   const token = localStorage.getItem("accessToken") || null;
-    //   if (to && to.meta && "requiresAuth" in to.meta && to.meta.requiresAuth) {
-    //     if (!token) {
-    //       localStorage.removeItem("accessToken");
-    //       await router.push({ name: "Auth" });
-    //       this.isLogged = false;
-    //     }
-    //     if (token) {
-    //       this.isLogged = true;
-    //     }
-    //   }
-    //   if (to.name === "Auth" && token) {
-    //     const role = localStorage.getItem("role") || null;
-    //     this.isLogged = true;
-    //     if (role) {
-    //       await router.push({ name: role });
-    //     }
-    //   }
-    // },
     async getAllData() {
       try {
         await Promise.allSettled([

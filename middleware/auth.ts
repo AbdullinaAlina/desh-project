@@ -6,11 +6,11 @@ export default defineNuxtRouteMiddleware((to) => {
 
   console.log("Auth middleware executed for:", to.fullPath, "Route name:", to.name);
 
-  if (!token && to.name !== "Auth") {
+  if (!token && to.name !== "auth") {
     return navigateTo("/auth");
   }
 
-  if (token && to.name === "Auth") {
+  if (token && to.name === "auth") {
     if (role) {
       return navigateTo(`/${role}`);
     }
