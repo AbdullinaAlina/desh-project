@@ -1,112 +1,128 @@
 <template>
-    <div class="w-full p-4">
-      <!-- Students List -->
-      <div class="flex justify-between items-center mb-4">
-        <h1>{{ $t("tab.students") }}</h1>
-  
-        <div class="search-bar flex items-center px-3 py-1 rounded-full bg-gray-100 shadow-sm w-52">
-          <v-icon class="text-gray-500 mr-2">mdi-magnify</v-icon>
-          <v-text-field
-            v-model="nameFilter"
-            @input="filterStudents"
-            :label="$t('label.filterByName')"
-            hide-details
-            solo
-            dense
-            class="search-input bg-transparent placeholder-gray-500 text-gray-800"
-          ></v-text-field>
-        </div>
+    <div>
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("add.student") }}
+      </v-btn>
+
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddStudentForm :onSubmit="handleAddStudent"/>
+        </Modal>
+      </teleport>
+
+      <div v-if="isLoading" class="py-16">
+        <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
       </div>
-  
-      <div class="students w-full">
-        <div v-if="store.isLoading" class="py-16">
-          <v-progress-circular
-            indeterminate
-            :size="67"
-            :width="5"
-          ></v-progress-circular>
-        </div>
-        <div v-else>
-          <table class="min-w-full w-full table-auto border-0">
-            <thead>
-              <tr class="uppercase text-left">
-                <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.name") }}</th>
-                <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.surname") }}</th>
-                <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.email") }}</th>
-                <th class="px-4 py-2 border-0 border-t-0">{{ $t("button.actions") }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in filteredStudents" :key="user.id">
-                <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.name }}</td>
-                <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.surname }}</td>
-                <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.email }}</td>
-                <td class="border-t border-t-gray-200 border-0 px-4 py-2">
-                  <button
-                    class="delete bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                    @click="deleteUser(user.id, 'students')"
-                  >
-                    {{ $t("button.delete") }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div v-else>
+        <transition-group name="list" tag="div">
+          <div v-for="user in students" :key="user.id" class="card">
+            <div class="name">
+              {{ $t("card.name") }}: {{ user.name }} {{ user.surname }},
+              {{ $t("card.email") }}: {{ user.email }}
+            </div>
+            <div class="details">
+              <button class="delete" @click="deleteStudent(user.id)">
+                {{ $t("button.delete") }}
+              </button>
+            </div>
+          </div>
+        </transition-group>
       </div>
     </div>
   </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { useStore } from "@/store/store";
-  import { useI18n } from 'vue-i18n';
-  
   const { t: $t } = useI18n();
+
+  import { ref, watchEffect } from "vue";
+  import { useStore } from "@/store/store";
+import AddStudentForm from "./forms/AddStudentForm.vue";
+
+
   const store = useStore();
+  const students = ref<User[]>([]);
+  const isLoading = ref(false);
+  const showModal = ref(false);
   
-  const nameFilter = ref("");
+  const loadStudents = async () => {
+    isLoading.value = store.isLoading;
+    students.value = store.students;
+  };
+
+  const closeModal = () => {
+    showModal.value = false;
+  }
   
-  const filteredStudents = computed(() => {
-    return store.students.filter(user => 
-      user.name.toLowerCase().includes(nameFilter.value.toLowerCase())
-    );
+  // Fetch students when the component is mounted
+  watchEffect(() => {
+    loadStudents();
   });
-  
-  const deleteUser = async (userId: number | null, role: string) => {
-    if (!userId || !role) return;
-    await store.deleteUser(userId, role);
+
+  const handleAddStudent = async (data: { name: string; surname: string; email: string }) => {
+    const org_id = localStorage.getItem("org_id");
+    if (org_id) {
+    try {
+      await store.addNewUser({
+        id: null,
+        username: null,
+        password: null,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: 2, 
+        organization: Number(org_id),
+        group: null
+      });
+      students.value = store.students; // Refresh the list
+      showModal.value = false; // Close the modal
+    } catch (error) {
+      console.error("Error adding tutor:", error);
+    }
+    }
+    
   };
   
-  const getData = async () => {
-    await store.getAllData();
-  };
+  const deleteStudent = async (studentId: number | null) => {
+    if (!studentId) return;
   
-  onMounted(getData);
+    try {
+      await store.deleteUser(studentId, "students");
+      students.value = store.students; // Refresh the list
+    } catch (error) {
+      console.error("Error deleting student:", error);
+    }
+  };
   </script>
   
   <style scoped>
-  /* Add any additional styles for the student list here if needed */
-  
-  /* Overlay Styles (if you have an add user form, include those styles here) */
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .card {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
   }
-  
-  .overlay-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
+  .name {
+    font-weight: bold;
   }
+  .delete {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .delete:hover {
+    background-color: darkred;
+  }
+  .list-enter-active,
+    .list-leave-active {
+        transition: all 0.3s ease;
+    }
+    .list-enter-from,
+    .list-leave-to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
   </style>
   

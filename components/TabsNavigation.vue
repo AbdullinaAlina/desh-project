@@ -12,6 +12,8 @@
   </template>
   
   <script setup lang="ts">
+  const {t: $t} = useI18n();
+  
   const props = defineProps({
     tabs: Array,
     activeTab: Number,

@@ -11,23 +11,23 @@
       </button>
     </div>
     <div class="tabcontent" v-if="activeTab === 1">
-      <TutorListNew :onDelete="deleteUser"/>
+      <TutorList :onDelete="deleteUser"/>
     </div>
     
     <div class="tabcontent" v-if="activeTab === 2">
-      <StudentListNew />
+      <StudentList />
     </div>
     
     <div class="tabcontent" v-if="activeTab === 3">
-      <GroupListNew />
+      <GroupList />
     </div>
     
     <div class="tabcontent" v-if="activeTab === 4">
-      <RoomListNew />
+      <RoomList />
     </div>
 
      <div class="tabcontent" v-if="activeTab === 5">
-      <EventListNew />
+      <EventList />
     </div>
   </div>
 </template>
@@ -38,13 +38,8 @@ definePageMeta({
 });
 
 import { useStore } from "@/store/store";
-import EventListNew from "~/components/EventListNew.vue";
-import GroupListNew from "~/components/GroupListNew.vue";
-import RoomListNew from "~/components/RoomListNew.vue";
-import StudentListNew from "~/components/StudentListNew.vue";
-import TutorList from "~/components/TutorList.vue";
-import TutorListNew from "~/components/TutorListNew.vue";
-import { Room, Group } from "~/composables/classes";
+import { ref } from "vue";
+
 const { t: $t } = useI18n();
 
 const tabs = [
@@ -61,18 +56,6 @@ const setTab = (tabNumber: number) => {
   activeTab.value = tabNumber;
 };
 
-const rules = {
-  required: (value: any) => !!value || $t("rules.required"),
-  email: (value: string) => {
-    const pattern =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return pattern.test(value) || $t("rules.email");
-  },
-  group: (value: string) => {
-    const pattern = /^[a-z]+-[a-z]+-\d$/;
-    return pattern.test(value) || $t("rules.group");
-  },
-};
 
 const getData = async () => {
   await store.getAllData();

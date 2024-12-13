@@ -8,16 +8,11 @@
         </h3>
         <v-col>
           <v-text-field
-            :label="$t('label.time')"
+            ref="input"
+            :label="$t('label.discipline')"
             :placeholder="$t('placeholder')"
             variant="outlined"
-            type="number"
-            v-model="time"
-            id="time"
-            maxlength="2"
-            min="8"
-            max="20"
-            step="1"
+            v-model="disciplineName"
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
@@ -40,10 +35,16 @@
         </datalist>
         <v-col>
           <v-text-field
-            :label="$t('label.discipline')"
+            :label="$t('label.time')"
             :placeholder="$t('placeholder')"
             variant="outlined"
-            v-model="disciplineName"
+            type="number"
+            v-model="time"
+            id="time"
+            maxlength="2"
+            min="8"
+            max="20"
+            step="1"
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
@@ -121,10 +122,12 @@
 
 <script setup lang="ts">
 const { t: $t } = useI18n();
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { useStore } from '~/store/store';
 
 const store = useStore();
+const { rules } = useValidation();
+
 
 const time = ref("");
 const day = ref("");
@@ -133,16 +136,20 @@ const tutorId = ref("");
 const groupId = ref("");
 const roomId = ref("");
 
+const inputRef = useTemplateRef('input');
+
+onMounted(() => {
+    if (inputRef.value) {
+        inputRef.value.focus();
+    }
+})
+
 const props = defineProps({
     submitForm: {
         type: Function,
         required: true
     }
 })
-
-const rules = {
-    required: (value: any) => !!value || $t("rules.required"),
-};
 
 const submitForm = () => {
     if (props.submitForm) {
@@ -154,7 +161,6 @@ const submitForm = () => {
             groupId: Number(groupId.value),
             roomId: Number(roomId.value)
         });
-        // Clear form fields
         time.value = "";
         day.value = "";
         disciplineName.value = "";

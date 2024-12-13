@@ -1,222 +1,125 @@
-<!-- TutorList.vue -->
-
 <template>
-    <div class="w-full p-4">
-      <!-- Tutors List -->
-      <div class="flex justify-between items-center mb-4">
-        <div class="flex flex-row gap-4">
-            <h1>{{ $t("tab.tutors") }}</h1>
-            <button @click="showAddTutorForm = true" class="uppercase flex items-center cursor-pointer">
-                <v-icon left>mdi-plus</v-icon>
-                {{ $t("button.addTutor") }}
-            </button>
-        </div>
+    <div>
+      <v-btn @click="showModal = true" class="mb-4">
+        {{ $t("add.tutor") }}
+      </v-btn>
+  
+      <teleport to="body">
+        <Modal :isVisible="showModal" :onClose="closeModal">
+          <AddTutorForm :onSubmit="handleAddTutor" />
+        </Modal>
+      </teleport>
+  
+      <div v-if="isLoading" class="py-16">
+        <v-progress-circular indeterminate :size="67" :width="5"></v-progress-circular>
+      </div>
+      
+      <div v-else>
+        <transition-group name="list" tag="div">
+            <div v-for="user in tutors" :key="user.id" class="card">
+                <div class="name">
+                    {{ $t("card.name") }}: {{ user.name }} {{ user.surname }},
+                    {{ $t("card.email") }}: {{ user.email }}
+                </div>
+                <div class="details">
+                    <button class="delete" @click="deleteUser(user.id, 'tutors')">
+                    {{ $t("button.delete") }}
+                    </button>
+                </div>
+            </div>
+        </transition-group>
         
-
-        <div class="search-bar flex items-center px-3 py-1 rounded-full bg-gray-100 shadow-sm w-52">
-    <v-icon class="text-gray-500 mr-2">mdi-magnify</v-icon>
-    <v-text-field
-        v-model="nameFilter"
-        @input="filterTutors"
-        :label="$t('label.filterByName')"
-        hide-details
-        solo
-        dense
-        class="search-input bg-transparent placeholder-gray-500 text-gray-800"
-    ></v-text-field>
-</div>
-      </div>
-  
-      <div class="tutors w-full">
-        <table class="min-w-full w-full table-auto border-0">
-          <thead>
-            <tr class="uppercase text-left">
-              <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.name") }}</th>
-              <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.surname") }}</th>
-              <th class="px-4 py-2 border-0 border-t-0">{{ $t("label.email") }}</th>
-              <th class="px-4 py-2 border-0 border-t-0">{{ $t("button.actions") }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in filteredTutors" :key="user.id">
-              <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.name }}</td>
-              <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.surname }}</td>
-              <td class="border-t border-t-gray-200 border-0 px-4 py-2">{{ user.email }}</td>
-              <td class="border-t border-t-gray-200 border-0 px-4 py-2">
-                <button
-                  class="delete bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
-                  @click="deleteUser(user.id, 'tutors')"
-                >
-                  {{ $t("button.delete") }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-  
-      <!-- Add Tutor Form Overlay -->
-      <div v-if="showAddTutorForm" class="overlay">
-        <div class="overlay-content">
-          <h3>{{ $t("add.tutor") }}</h3>
-          <v-form @submit.prevent="addNewUser('tutor')" class="flex flex-col">
-            <v-text-field
-              :label="$t('label.name')"
-              v-model="addName"
-              :rules="[rules.required]"
-            ></v-text-field>
-            <v-text-field
-              :label="$t('label.surname')"
-              v-model="addSurname"
-              :rules="[rules.required]"
-            ></v-text-field>
-            <v-text-field
-              :label="$t('label.email')"
-              v-model="addEmail"
-              type="email"
-              :rules="[rules.required, rules.email]"
-            ></v-text-field>
-            <v-btn color="primary" type="submit">{{ $t("button.add") }}</v-btn>
-            <v-btn @click="showAddTutorForm = false">{{ $t("button.cancel") }}</v-btn>
-          </v-form>
-        </div>
       </div>
     </div>
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { useStore } from "@/store/store";
-  import { useI18n } from 'vue-i18n';
-  
+  import { useI18n } from "vue-i18n";
   const { t: $t } = useI18n();
-  const store = useStore();
-  const showAddTutorForm = ref(false);
-  
-  // Fields and form methods
-  const addName = ref("");
-  const addSurname = ref("");
-  const addEmail = ref("");
-  const nameFilter = ref("");
-  
-  const filteredTutors = computed(() => {
-  return store.tutors.filter(user => 
-    user.name.toLowerCase().includes(nameFilter.value.toLowerCase())
-  );
-});
 
-  const rules = {
-    required: (value: any) => !!value || $t("rules.required"),
-    email: (value: string) => {
-      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return pattern.test(value) || $t("rules.email");
-    },
+  import { ref, watchEffect } from "vue";
+  import { useStore } from "@/store/store";
+  import Modal from "@/components/Modal.vue";
+  import AddTutorForm from "@/components/forms/AddTutorForm.vue";
+  
+  const store = useStore();
+  const isLoading = ref(false);
+  const tutors = ref<User[]>([]);
+  const showModal = ref(false);
+  
+  const loadTutors = async () => {
+    isLoading.value = store.isLoading;
+    tutors.value = store.tutors;
   };
   
-  const addNewUser = async (role: string) => {
-    const role_id = role === "student" ? 2 : 3;
-    const org_id = localStorage.getItem("org_id") || null;
-    if (org_id && role_id === 3) {
-      const newUser: User = {
-        id: null,
-        username: null,
-        password: null,
-        name: addName.value,
-        surname: addSurname.value,
-        email: addEmail.value,
-        role: role_id,
-        organization: Number(org_id),
-        group: null, // Assuming this is correct as per your initial code
-      };
-      await store.addNewUser(newUser);
-      resetForm();
-    }
-    if (org_id && role_id === 2) {
-      const newUser: User = {
-        id: null,
-        username: null,
-        password: null,
-        name: addName.value,
-        surname: addSurname.value,
-        email: addEmail.value,
-        role: role_id,
-        organization: Number(org_id),
-        group: Number(addGroupId.value),
-      };
-      await store.addNewUser(newUser);
-      resetForm();
-    }
-  };
-  
-  const resetForm = () => {
-    addName.value = "";
-    addSurname.value = "";
-    addEmail.value = "";
-    showAddTutorForm.value = false; // Hide the form after submission
-  };
+  // Fetch tutors when the component is mounted
+  watchEffect(() => {
+    loadTutors();
+  });
   
   const deleteUser = async (userId: number | null, users: any) => {
-    if (!userId || !users) return;
+    if (userId === null || !users) return;
     await store.deleteUser(userId, users);
   };
   
-  // Call this function to load initial data if needed
-  const getData = async () => {
-    await store.getAllData();
+  const closeModal = () => {
+    showModal.value = false;
   };
   
-  onMounted(getData);
+  const handleAddTutor = async (data: { name: string; surname: string; email: string }) => {
+    const org_id = localStorage.getItem("org_id");
+    if (org_id) {
+    try {
+      await store.addNewUser({
+        id: null,
+      username: null,
+      password: null,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: 3, // Assuming 3 is the role ID for tutors
+        organization: Number(org_id),
+        group: null,
+      });
+      tutors.value = store.tutors; // Refresh the list
+      showModal.value = false; // Close the modal
+    } catch (error) {
+      console.error("Error adding tutor:", error);
+    }
+    }
+    
+  };
   </script>
   
   <style scoped>
-  /* Overlay Styles */
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .overlay-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
-  }
-  
-  /* Table Styles */
-  .tutors table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .tutors th,
-  .tutors td {
-    padding: 12px;
+  .card {
+    margin-bottom: 1rem;
+    padding: 1rem;
     border: 1px solid #ddd;
+    border-radius: 8px;
   }
-  
-  .tutors th {
-    background-color: #f4f4f4;
+  .name {
+    font-weight: bold;
   }
-  
-  .tutors .delete {
-    background-color: #f44336; /* Red background */
-    color: white; /* White text */
+  .delete {
+    background-color: red;
+    color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 0.5rem;
     cursor: pointer;
+    border-radius: 4px;
   }
-  
-  .tutors .delete:hover {
-    background-color: #d32f2f; /* Darker red on hover */
+  .delete:hover {
+    background-color: darkred;
   }
+  .list-enter-active,
+    .list-leave-active {
+        transition: all 0.3s ease;
+    }
+    .list-enter-from,
+    .list-leave-to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
   </style>
   

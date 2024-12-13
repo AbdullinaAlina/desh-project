@@ -8,11 +8,26 @@
   </template>
   
   <script setup>
+
+  onMounted(() => {
+    window.addEventListener("keyup", handleKeyUp);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("keyup", handleKeyUp);
+  });
+
   const props = defineProps({
-    isVisible: Boolean, // Whether the modal is visible
-    onClose: Function,  // Function to call when the modal is closed
+    isVisible: Boolean, 
+    onClose: Function, 
   });
   
+  const handleKeyUp = (event) => {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+};
+
   const closeModal = () => {
     if (props.onClose) props.onClose();
   };

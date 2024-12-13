@@ -8,7 +8,8 @@
         </h3>
         <v-col>
           <v-text-field
-            :label="$t('label.name2')"
+            ref="nameInput"
+            :label="$t('label.name3')"
             :placeholder="$t('placeholder')"
             variant="outlined"
             v-model="groupName"
@@ -34,10 +35,12 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 import { useStore } from '~/store/store'; 
-import { ref } from 'vue';
+import { onMounted, ref, useTemplateRef } from 'vue';
 
 const store = useStore();
 const groupName = ref("");
+
+const { rules } = useValidation();
 
 const props = defineProps({
     onSubmit: {
@@ -45,13 +48,14 @@ const props = defineProps({
         required: true,
     }
 })
-const rules = {
-  required: (value: any) => !!value || $t("rules.required"),
-  group: (value: string) => {
-    const pattern = /^[a-z]+-[a-z]+-\d$/;
-    return pattern.test(value) || $t("rules.group");
-  },
-};
+
+const inputRef = useTemplateRef('nameInput');
+
+onMounted(() => {
+    if (inputRef.value) {
+        inputRef.value.focus();
+    }
+})
 
 const submitForm = () => {
     if (props.onSubmit) {

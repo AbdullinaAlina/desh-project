@@ -62,7 +62,7 @@ export const useStore = defineStore("store", {
       useCookie("role").value = null;
       useCookie("user_id").value = null;
       useCookie("org_id").value = null;
-      
+
       await router.push({ name: "auth" });
     },
     async getAllData() {

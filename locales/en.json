@@ -57,6 +57,7 @@
   "label": {
     "name": "Name",
     "name2": "Room name",
+    "name3": "Group name",
     "surname": "Surname",
     "email": "Email",
     "group": "Choose a group",

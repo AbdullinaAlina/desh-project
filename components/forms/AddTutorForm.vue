@@ -5,6 +5,7 @@
       </h3>
       <v-col>
         <v-text-field
+          ref="inputName"
           :label="$t('label.name')"
           :placeholder="$t('placeholder')"
           variant="outlined"
@@ -51,7 +52,7 @@
     import { useI18n } from "vue-i18n";
     const { t: $t } = useI18n();
 
-  import { ref } from "vue";
+  import { onMounted, ref, useTemplateRef } from "vue";
   import { useStore } from "@/store/store";
 
   const store = useStore();
@@ -66,15 +67,16 @@
   const name = ref("");
   const surname = ref("");
   const email = ref("");
+
+  const inputRef = useTemplateRef('inputName');
+
+  onMounted(() => {
+    if (inputRef.value){
+      inputRef.value?.focus();
+    }
+  })
   
-  const rules = {
-    required: (value: any) => !!value || $t("rules.required"),
-    email: (value: string) => {
-      const pattern =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return pattern.test(value) || $t("rules.email");
-    },
-  };
+  const { rules } = useValidation();
   
   const submitForm = () => {
     if (props.onSubmit) {
