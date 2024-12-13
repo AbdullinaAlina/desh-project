@@ -120,46 +120,53 @@
       </v-form>
 </template>
 
-<script setup lang="ts">
-const { t: $t } = useI18n();
-import { ref, useTemplateRef } from 'vue';
-import { useStore } from '~/store/store';
+<script lang="ts">
+import { ref, onMounted, PropType } from "vue";
+import { useI18n } from "vue-i18n";
+import { useStore } from "../../store/store";
+import validationMixin from "../mixins/validationMixin";
 
-const store = useStore();
-const { rules } = useValidation();
-
-
-const time = ref("");
-const day = ref("");
-const disciplineName = ref("");
-const tutorId = ref("");
-const groupId = ref("");
-const roomId = ref("");
-
-const inputRef = useTemplateRef('input');
-
-onMounted(() => {
-    if (inputRef.value) {
-        inputRef.value.focus();
-    }
-})
-
-const props = defineProps({
+export default {
+  mixins: [validationMixin],
+  props: {
     submitForm: {
-        type: Function,
-        required: true
-    }
-})
+        type: Function as PropType<(formData: {
+        time: number;
+        day: string;
+        disciplineName: string;
+        tutorId: number;
+        groupId: number;
+        roomId: number;
+      }) => void>,
+      required: true,
+    },
+},
+  setup(props) {
+    const store = useStore();
 
-const submitForm = () => {
-    if (props.submitForm) {
+    const time = ref("");
+    const day = ref("");
+    const disciplineName = ref("");
+    const tutorId = ref("");
+    const groupId = ref("");
+    const roomId = ref("");
+    const input = ref<HTMLInputElement | null>(null);
+
+    onMounted(() => {
+      if (input.value) {
+        input.value.focus();
+      }
+    });
+
+    const submitForm = () => {
+      if (time.value && day.value && disciplineName.value && tutorId.value && groupId.value && roomId.value && props.submitForm) {
         props.submitForm({
-            time: Number(time.value),
-            day: day.value,
-            disciplineName: disciplineName.value,
-            tutorId: Number(tutorId.value),
-            groupId: Number(groupId.value),
-            roomId: Number(roomId.value)
+          time: Number(time.value),
+          day: day.value,
+          disciplineName: disciplineName.value,
+          tutorId: Number(tutorId.value),
+          groupId: Number(groupId.value),
+          roomId: Number(roomId.value),
         });
         time.value = "";
         day.value = "";
@@ -167,6 +174,20 @@ const submitForm = () => {
         tutorId.value = "";
         groupId.value = "";
         roomId.value = "";
-    }
+      }
+    };
+
+    return {
+      store,
+      time,
+      day,
+      disciplineName,
+      tutorId,
+      groupId,
+      roomId,
+      input,
+      submitForm,
+    };
+  },
 };
 </script>

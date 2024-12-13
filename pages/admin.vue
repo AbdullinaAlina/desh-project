@@ -11,7 +11,7 @@
       </button>
     </div>
     <div class="tabcontent" v-if="activeTab === 1">
-      <TutorList :onDelete="deleteUser"/>
+      <TutorList/>
     </div>
     
     <div class="tabcontent" v-if="activeTab === 2">

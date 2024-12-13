@@ -64,6 +64,7 @@
 </template>
 <script setup lang="ts">
 import { useStore } from "@/store/store";
+const {t : $t} = useI18n();
 const store = useStore();
 const { locale } = useI18n();
 const items = [
