@@ -1,6 +1,6 @@
 <template>
     <div>
-      <v-btn @click="showModal = true" class="mb-4">
+      <v-btn @click="showModal = true" class="mt-5 ml-5 ">
         {{ $t("add.tutor") }}
       </v-btn>
   
@@ -88,6 +88,16 @@
       });
       tutors.value = store.tutors; // Refresh the list
       showModal.value = false; // Close the modal
+
+      // Wait for DOM to update with the new tutor
+      await nextTick();
+
+      // Scroll to the newly added tutor (last in the list)
+      const lastTutorElement = document.querySelector('.card:last-child');
+      if (lastTutorElement) {
+        lastTutorElement.scrollIntoView({ behavior: "smooth" });
+      }
+
     } catch (error) {
       console.error("Error adding tutor:", error);
     }

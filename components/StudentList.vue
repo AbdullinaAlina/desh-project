@@ -1,9 +1,9 @@
 <template>
     <div>
-      <v-btn @click="showModal = true" class="mb-4">
+      <v-btn @click="showModal = true" class="mt-5 ml-5">
         {{ $t("add.student") }}
       </v-btn>
-
+      
       <teleport to="body">
         <Modal :isVisible="showModal" :onClose="closeModal">
           <AddStudentForm :onSubmit="handleAddStudent"/>
@@ -97,6 +97,12 @@
   </script>
   
   <style scoped>
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
   .card {
     margin-bottom: 1rem;
     padding: 1rem;

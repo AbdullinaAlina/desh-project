@@ -33,13 +33,12 @@
 </template>
 
 <script setup lang="ts">
+import { useStore } from "../store/store"; 
+import { nextTick, ref } from "vue";
+
 definePageMeta({
   middleware: ["auth", "role"],
 });
-
-import { useStore } from "@/store/store";
-import { ref } from "vue";
-
 const { t: $t } = useI18n();
 
 const tabs = [
@@ -52,22 +51,16 @@ const tabs = [
 const activeTab = ref(1);
 const store = useStore();
 
-const setTab = (tabNumber: number) => {
+const setTab = async (tabNumber: number) => {
   activeTab.value = tabNumber;
+  window.scrollTo(0, 0);
 };
 
 
 const getData = async () => {
   await store.getAllData();
 };
-const deleteUser = async (userId: number | null, users: any) => {
-  if (!userId || !users) return;
-  await store.deleteUser(userId, users);
-};
-const deleteItem = async (id: number | undefined, path: string, items: any) => {
-  if (!id || !path || !items) return;
-  await store.deleteItem(id, path, items);
-};
+
 
 onMounted(getData);
 
@@ -78,6 +71,7 @@ useHead({
 
 <style scoped>
 .nav button.active {
+  border-radius: 0;
   background-color: #ccc;
 }
 </style>

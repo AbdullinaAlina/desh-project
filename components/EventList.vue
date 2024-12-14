@@ -1,6 +1,6 @@
 <template>
     <div>
-      <v-btn @click="showModal = true">
+      <v-btn @click="showModal = true" class="mt-5 ml-5">
         {{ $t("add.event") }}
       </v-btn>
 
