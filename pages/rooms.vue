@@ -55,7 +55,7 @@
           {{ $t("button.search") }}
         </v-btn>
       </v-col>
-      <v-col>s
+      <v-col>
         <v-btn
           color="#80CBC4"
           @click="getCurrentRooms()"
@@ -102,6 +102,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ["auth", "role"],
+});
 import { useStore } from "@/store/store";
 import { ref } from "vue";
 const { t: $t } = useI18n();
@@ -114,6 +117,11 @@ const rules = {
   required: (value: any) => !!value || $t("rules.required"),
 };
 const getCurrentRooms = async () => {
+  const currentDate = new Date();
+  const currentHour = currentDate.getHours();
+  const currentDay = currentDate.getDay();
+  hour.value = currentHour;
+  day.value = store.days[currentDay].name;
   await store.getCurrentAvailableRooms();
 };
 const getAvailableRooms = () => {

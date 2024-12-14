@@ -97,24 +97,31 @@ export const useStore = defineStore("store", {
       }
     },
     async getAvailableRooms(hour: number, day: string) {
-      if (!hour || !day) return [];
-      if (this.rooms && this.rooms.length) {
-        return this.rooms;
-      }
+      if (!hour || !day) return;
+      
       const index = this.days.findIndex((item) => item.name === day);
+    
+      if (index === -1) {
+        console.error("Invalid day provided:", day);
+        return;
+      }
+    
       try {
         this.isLoading = true;
-        if (hour > 7 && hour < 21 && index > 0 && index < 7) {
-          this.rooms = await api.getAvailableRooms(hour, index);
+    
+        if (hour > 7 && hour < 21 && index >= 0 && index < 7) {
+          const response = await api.getAvailableRooms(hour, index);    
+          this.rooms = [...response]; 
         } else {
-          throw new Error("No value");
+          console.error("Invalid hour or day index");
+          this.rooms = []; 
         }
       } catch (err) {
-        console.log("This error from getAvailableRooms: " + err);
+        console.error("Error in getAvailableRooms:", err);
       } finally {
         this.isLoading = false;
       }
-    },
+    },    
     async getUsers(data: Users): Promise<User[] | undefined> {
       if (!data) return [];
       if (this[data] && this[data].length) {

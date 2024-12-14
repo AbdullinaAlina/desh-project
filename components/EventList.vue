@@ -28,14 +28,16 @@
           </div>
         </div>
       </div>
-    </div>
-  </template>
+  </div>
+</template>
   
-  <script setup lang="ts">
-  import { ref, watchEffect } from "vue";
-  import { useStore } from "@/store/store";
+<script setup lang="ts">
+import { ref, watchEffect } from "vue";
+import { useStore } from "@/store/store";
 import { Eventt } from "~/composables/classes";
-import Modal from "./Modal.vue";
+import { defineAsyncComponent } from "vue";
+const Modal = defineAsyncComponent(() => import("./Modal.vue"));
+
 import AddEventForm from "./forms/AddEventForm.vue";
   const { t: $t } = useI18n();
 
@@ -54,8 +56,7 @@ import AddEventForm from "./forms/AddEventForm.vue";
     events.value = store.events;
   };
   
-  // Fetch events when the component is mounted
-  watchEffect(() => {
+  onMounted(() => {
     loadEvents();
   });
   
@@ -66,7 +67,7 @@ import AddEventForm from "./forms/AddEventForm.vue";
     tutorId: number;
     groupId: number;
     roomId: number;
-}) => {
+  }) => {
     const org_id = localStorage.getItem("org_id") || null;
     const dayIndex = store.days.findIndex((day) => day.name === data.day.trim());
     
@@ -80,9 +81,8 @@ import AddEventForm from "./forms/AddEventForm.vue";
                 data.tutorId,
                 data.groupId
             );
-            // Refresh the event list
             events.value = store.events;
-            showModal.value = false; // Close the modal
+            showModal.value = false; 
         } catch (error) {
             console.error("Error adding event:", error);
         }
@@ -96,7 +96,7 @@ import AddEventForm from "./forms/AddEventForm.vue";
   
     try {
       await store.deleteItem(eventId, "event", "events");
-      events.value = store.events; // Refresh the list
+      events.value = store.events; 
     } catch (error) {
       console.error("Error deleting event:", error);
     }

@@ -26,7 +26,7 @@
   if (event.key === "Escape") {
     closeModal();
   }
-};
+  };
 
   const closeModal = () => {
     if (props.onClose) props.onClose();

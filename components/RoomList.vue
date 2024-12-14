@@ -33,8 +33,8 @@
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
   import { Room } from "~/composables/classes";
-import Modal from "./Modal.vue";
-import AddRoomForm from "./forms/AddRoomForm.vue";
+  import { defineAsyncComponent } from "vue";
+  const Modal = defineAsyncComponent(() => import("./Modal.vue"));import AddRoomForm from "./forms/AddRoomForm.vue";
   const { t: $t } = useI18n();
   
   const store = useStore();
@@ -63,14 +63,12 @@ import AddRoomForm from "./forms/AddRoomForm.vue";
   }
   }
 
-
-
   const deleteRoom = async (roomId: number | undefined) => {
     if (!roomId) return;
   
     try {
       await store.deleteItem(roomId, "room", "rooms");
-      rooms.value = store.rooms; // Refresh the list
+      rooms.value = store.rooms; 
     } catch (error) {
       console.error("Error deleting room:", error);
     }

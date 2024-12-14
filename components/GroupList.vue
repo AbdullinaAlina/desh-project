@@ -27,12 +27,14 @@
     </div>
   </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
-import AddGroupForm from "./forms/AddGroupForm.vue";
-import { Group } from "~/composables/classes";
+  import AddGroupForm from "./forms/AddGroupForm.vue";
+  import { Group } from "~/composables/classes";
   const {t: $t} = useI18n();
+  import { defineAsyncComponent } from "vue";
+  const Modal = defineAsyncComponent(() => import("./Modal.vue"));
   
   const store = useStore();
   const groups = ref<Group[]>([]);

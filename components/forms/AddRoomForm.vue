@@ -40,7 +40,7 @@
     </v-form>
   </template>
   
-  <script lang="ts">
+<script lang="ts">
   import { ref, onMounted } from "vue";
   import { useI18n } from "vue-i18n";
   import { useStore } from "../../store/store"
@@ -87,5 +87,5 @@
         },
     },
   };
-  </script>
+</script>
   

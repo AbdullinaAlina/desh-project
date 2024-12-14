@@ -29,14 +29,16 @@
         </transition-group>
       </div>
     </div>
-  </template>
+</template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   const { t: $t } = useI18n();
 
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
-import AddStudentForm from "./forms/AddStudentForm.vue";
+  import AddStudentForm from "./forms/AddStudentForm.vue";
+  import { defineAsyncComponent } from "vue";
+  const Modal = defineAsyncComponent(() => import("./Modal.vue"));
 
 
   const store = useStore();

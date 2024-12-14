@@ -16,17 +16,17 @@
       
       <div v-else>
         <transition-group name="list" tag="div">
-            <div v-for="user in tutors" :key="user.id" class="card">
-                <div class="name">
-                    {{ $t("card.name") }}: {{ user.name }} {{ user.surname }},
-                    {{ $t("card.email") }}: {{ user.email }}
-                </div>
-                <div class="details">
-                    <button class="delete" @click="deleteUser(user.id, 'tutors')">
-                    {{ $t("button.delete") }}
-                    </button>
-                </div>
+          <div v-for="user in tutors" :key="user.id" class="card">
+            <div class="name">
+              {{ $t("card.name") }}: {{ user.name }} {{ user.surname }},
+              {{ $t("card.email") }}: {{ user.email }}
             </div>
+            <div class="details">
+              <button class="delete" @click="deleteUser(user.id, 'tutors')">
+                {{ $t("button.delete") }}
+              </button>
+            </div>
+           </div>
         </transition-group>
         
       </div>
@@ -39,7 +39,8 @@
 
   import { ref, watchEffect } from "vue";
   import { useStore } from "@/store/store";
-  import Modal from "@/components/Modal.vue";
+  import { defineAsyncComponent } from "vue";
+  const Modal = defineAsyncComponent(() => import("./Modal.vue"));
   import AddTutorForm from "@/components/forms/AddTutorForm.vue";
   
   const store = useStore();
@@ -48,10 +49,14 @@
   const showModal = ref(false);
   
   const loadTutors = async () => {
-    isLoading.value = store.isLoading;
+    // isLoading.value = store.isLoading;
     tutors.value = store.tutors;
   };
   
+  watch(() => store.isLoading, (newVal) => {
+  isLoading.value = newVal;
+});
+
   // Fetch tutors when the component is mounted
   watchEffect(() => {
     loadTutors();

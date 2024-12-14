@@ -62,6 +62,7 @@
     <hr class="border-b-2 border-gray-100 opacity-25 my-0 py-0" />
   </header>
 </template>
+
 <script setup lang="ts">
 import { useStore } from "@/store/store";
 const {t : $t} = useI18n();
