@@ -2,10 +2,6 @@ export default defineNuxtRouteMiddleware((to) => {
   const token = useCookie("accessToken").value;
   const role = useCookie("role").value;
 
-  console.log("[Middleware] Token:", token, "Role:", role);
-
-  console.log("Auth middleware executed for:", to.fullPath, "Route name:", to.name);
-
   if (!token && to.name !== "auth") {
     return navigateTo("/auth");
   }

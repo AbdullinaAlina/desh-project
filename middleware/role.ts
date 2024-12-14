@@ -2,12 +2,9 @@ export default defineNuxtRouteMiddleware((to) => {
     const role = useCookie("role").value;
   
     if (!role) {
-      console.error("Role cookie is missing. Redirecting to /auth.");
       return navigateTo("/auth");
     }
   
-    console.log("Role middleware executed for:", to.fullPath, "Route name:", to.name);
-
     if (to.name === "student" && role !== "student") {
       console.error("Unauthorized: Student route is restricted.");
       return navigateTo(`/${role}`);
@@ -20,5 +17,5 @@ export default defineNuxtRouteMiddleware((to) => {
       console.error("Unauthorized: Admin route is restricted.");
       return navigateTo(`/${role}`);
     }
-  });
+});
   
